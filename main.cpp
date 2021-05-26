@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "player.h"
+
 using namespace std;
 ofstream outputfile;
 
