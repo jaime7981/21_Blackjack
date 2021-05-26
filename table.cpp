@@ -2,7 +2,7 @@
 
 table::table(string file){
     numberofplayers = 0;
-
+    loadfile = file;
 }
 
 void table::AddPlayers(string username, int money){
@@ -14,8 +14,7 @@ void table::AddPlayers(string username, int money){
 void table::RemovePlayers(string username){
     for (int a = 0; a < numberofplayers; a++){
         if (players[a].ShowName() == username){
-            player *p = &players[a];
-            p = NULL;
+            delete &players[a];
         }
     }
     numberofplayers --;

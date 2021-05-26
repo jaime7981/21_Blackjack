@@ -1,9 +1,15 @@
 CC = g++
-flags = 
+flags = -Wall -Wextra -Wundef -Werror -Wuninitialized -Winit-self
 exe = blakcjack.exe
 
-output: main.o player.o deck.o
-	$(CC) $(flags) -o $(exe) main.o player.o deck.o
+output: main.o player.o deck.o table.o card.o
+	$(CC) $(flags) -o $(exe) main.o player.o deck.o table.o card.o
+
+card.o:
+	$(CC) $(flags) -o card.o card.cpp -c
+
+table.o:
+	$(CC) $(flags) -o table.o table.cpp -c
 
 player.o: player.cpp player.h
 	$(CC) $(flags) -o player.o player.cpp -c
@@ -16,7 +22,7 @@ main.o: main.cpp player.h
 
 run:
 	make
-	./output.exe
+	./$(exe)
 
 clear:
 	rm *.o $(exe)

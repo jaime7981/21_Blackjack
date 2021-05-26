@@ -7,6 +7,7 @@
 class table {
 private:
     int numberofplayers;
+    string loadfile;
     player players[7];
     deck maindeck[4];
 

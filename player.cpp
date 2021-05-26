@@ -8,6 +8,14 @@ player::player(string Username, int Money){
     win = false;
 }
 
+player::player(string Username, int Money, int RoundsPlayed, int RoundsWinned){
+    username = Username;
+    money = Money;
+    roundsplayed = RoundsPlayed;
+    roundswinned = RoundsWinned;
+    win = false;
+}
+
 void player::AddMoney(int Money){
     money += Money;
 }
@@ -37,7 +45,7 @@ void player::GetHand(card firstcard, card secondcard){
 }
 
 void player::AddCards(card newcard){
-
+    extracard = newcard;
 }
 
 void player::RemoveHand(){

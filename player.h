@@ -18,6 +18,7 @@ private:
 public:
     player(){};
     player(string, int);
+    player(string, int, int , int);
     
     void AddMoney(int);
     void RemoveMoney(int);
