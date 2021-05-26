@@ -12,13 +12,25 @@ void deck::ShuffleDeck(){
     }
 }
 
-void deck::StartingCards(int NumberOfPlayers){
-    for (int a = 0; a < NumberOfPlayers; a++){
-        
+card deck::GiveCard(){
+    bool flag = true;
+    int a;
+    int b;
+    int number;
+    int type;
+    while (flag){
+        a = 0; //randomizar
+        b = 0; //randomizar
+        if (cards[a][b] != 0){
+            type = a;
+            number = b;
+            cards[a][b] = 0;
+            flag = false;
+        }
     }
-}
 
-void deck::GiveCards(){
+    card *newcard = new card(number, type);
 
+    return *newcard;
 }
 
