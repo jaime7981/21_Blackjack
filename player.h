@@ -17,13 +17,13 @@ private:
     bool win;
 public:
     player(){};
-    player(string, int);
     player(string, int, int , int);
     
     void AddMoney(int);
     void RemoveMoney(int);
     int ShowMoney();
     
+    void ChangeName(string);
     string ShowName();
 
     void AddRound(bool);

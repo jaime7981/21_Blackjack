@@ -1,13 +1,5 @@
 #include "player.h"
 
-player::player(string Username, int Money){
-    username = Username;
-    money = Money;
-    roundsplayed = 0;
-    roundswinned = 0;
-    win = false;
-}
-
 player::player(string Username, int Money, int RoundsPlayed, int RoundsWinned){
     username = Username;
     money = Money;
@@ -28,6 +20,10 @@ int player::ShowMoney(){
     return money;
 }
 
+void player::ChangeName(string Username){
+    username = Username;
+}
+
 string player::ShowName(){
     return username;
 }
@@ -37,6 +33,13 @@ void player::AddRound(bool check){
     if (check){
         roundswinned ++;
     }
+}
+
+int player::ShowRoundsPlayed(){
+    return roundsplayed;
+}
+int player::ShowRoundsWinned(){
+    return roundswinned;
 }
 
 void player::GetHand(card firstcard, card secondcard){

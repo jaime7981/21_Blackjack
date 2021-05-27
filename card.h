@@ -12,6 +12,9 @@ public:
     int GetNumber();
     int GetType();
 
+    void SetNumber(int);
+    void SetType(int);
+
     void EraseCard();
 };
 

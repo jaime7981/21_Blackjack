@@ -17,3 +17,11 @@ int card::GetNumber(){
 int card::GetType(){
     return type;
 }
+
+void card::SetNumber(int num){
+    number = num;
+}
+
+void card::SetType(int typ){
+    type = typ;
+}

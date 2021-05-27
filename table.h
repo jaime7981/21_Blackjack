@@ -1,3 +1,4 @@
+#include <iostream>
 #include "player.h"
 #include "deck.h"
 
@@ -7,16 +8,20 @@
 class table {
 private:
     int numberofplayers;
-    string loadfile;
+    string tablename;
     player players[7];
     deck maindeck[4];
 
 public:
-    table() {};
+    table() {
+        numberofplayers = 0;
+    };
     table(string);
 
-    void AddPlayers(string, int);
-    void RemovePlayers(string);
+    void AddPlayers(string, int, int , int);
+    int RemovePlayers(int);
+    void ShowPlayers();
+    player* GetPlayers(int num);
 
     void AskForCards();
 
