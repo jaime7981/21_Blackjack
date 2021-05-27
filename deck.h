@@ -11,6 +11,7 @@ private:
                         {1,2,3,4,5,6,7,8,9,10,11,12,13}, 
                         {1,2,3,4,5,6,7,8,9,10,11,12,13}};
     card deckofcards[4][13];
+    card empycard;
     int cardcounter;
 public:
     deck() {
@@ -19,6 +20,7 @@ public:
     };
     void AsignCards();
     card GiveCard();
+    card GiveEmptyCard();
     void ShowAllCard();
 
     int GetCardCount();

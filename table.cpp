@@ -1,5 +1,6 @@
 #include "table.h"
 #include <string>
+#include <ctime>
 
 void table::AddPlayers(string username, int money, int roundsplayed, int roundswinned){
     if (numberofplayers < 8){
@@ -30,10 +31,16 @@ void table::ShowPlayers(){
 }
 
 player* table::GetPlayers(int num){
-    return &players[num];
+    if (num == 8){
+        return &dealer;
+    }
+    else if (num < 8 && num >= 0){
+        return &players[num];
+    }
+    return NULL;
 }
 
-void table::ShuffleDecks(){
+void table::ShowDeck(){
     for (int a = 0; a < 4; a++){
         maindeck[a].ShowAllCard();
     }
@@ -46,14 +53,30 @@ void table::StartRound(){
 
     for (int a = 0; a < 7; a++){
         if (players[a].ShowName() != ""){
-            decknumber = 0; //randomizar
+            decknumber = rand() % 4;
             firstcard = maindeck[decknumber].GiveCard();
-            decknumber = 0; //randomizar
+            decknumber = rand() % 4;
             secondcard = maindeck[decknumber].GiveCard();
 
             players[a].GetHand(firstcard, secondcard);
+            for (int a = 0; a < 5; a++){
+                
+            }
         }
+        
+        players[a].EmptyExtraCards();
     }
+    decknumber = rand() % 4;
+    firstcard = maindeck[decknumber].GiveCard();
+    decknumber = rand() % 4;
+    secondcard = maindeck[decknumber].GiveCard();
+
+    dealer.GetHand(firstcard, secondcard);
+}
+
+card table::AskForCards(){
+    int decknumber = rand() % 4;
+    return maindeck[decknumber].GiveCard();
 }
 
 void table::EndRound(){
@@ -63,4 +86,5 @@ void table::EndRound(){
             players[a].AddRound();
         }
     }
+    dealer.RemoveHand();
 }

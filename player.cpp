@@ -1,4 +1,5 @@
 #include "player.h"
+#include "card.h"
 
 player::player(string Username, int Money, int RoundsPlayed, int RoundsWinned){
     username = Username;
@@ -6,6 +7,7 @@ player::player(string Username, int Money, int RoundsPlayed, int RoundsWinned){
     roundsplayed = RoundsPlayed;
     roundswinned = RoundsWinned;
     win = false;
+    stand = false;
     extracardcounter = 0;
 }
 
@@ -35,6 +37,7 @@ void player::AddRound(){
         roundswinned ++;
     }
     win = false;
+    stand = false;
 }
 
 int player::ShowRoundsPlayed(){
@@ -63,6 +66,68 @@ void player::RemoveHand(){
     extracardcounter = 0;
 }
 
+card player::GetCards(int num){
+    return startingcards[num];
+}
+
+void player::EmptyExtraCards(){
+    for (int a = 0; a < 5; a++){
+        extracard[a].EraseCard();
+    }
+}
+
+int player::CardSum(){
+    int sum = 0;
+    int aux = 0;
+    int as = 0;
+    int num;
+    for (int a = 0; a < 2; a++){
+        num = startingcards[a].GetNumber();
+        //cout << to_string(num) << endl;
+        if (num == 1){
+            as ++;
+        }
+        else if (num == 11 || num == 12 || num == 13) {
+            sum += 10;
+        }
+        else{
+            sum += num;
+        }
+    }
+    for (int a = 0; a < 5; a++){
+        if (extracard[a].GetNumber() != 0){
+            num = extracard[a].GetNumber();
+            cout << to_string(num) << endl;
+            if (num == 1){
+                as ++;
+            }
+            else if (num == 11 || num == 12 || num == 13) {
+                sum += 10;
+            }
+            else{
+                sum += num;
+            }
+        }
+    }
+    for (int a = 0; a < as; a++){
+        sum += 1;
+        aux = sum + 11;
+        if (aux <=21){
+            sum = aux;
+        }
+        else if (sum <= 21) {
+            sum = sum;
+        }
+        else{
+            return 1; //1 es que perdio
+        }
+    }
+    if (sum == 21){
+        return 0; //gano
+    }
+    return sum;
+}
+
 int player::CalculateHand(){
     return 0;
 }
@@ -71,6 +136,30 @@ bool player::GetWin(){
     return win;
 }
 
-void player::ChangeWin(bool state){
+void player::SetWin(bool state){
     win = state;
+}
+
+int player::GetBet(){
+    return bet;
+}
+
+void player::SetBet(int Bet){
+    bet = Bet;
+}
+
+int player::GetMultiplier(){
+    return multiplier;
+}
+
+void player::SetMultiplier(int Mult){
+    multiplier = Mult;
+}
+
+bool player::GetStand(){
+    return stand;
+}
+
+void player::SetStand(bool Stand){
+    stand = Stand;
 }
