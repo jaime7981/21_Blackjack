@@ -8,13 +8,17 @@
 class table {
 private:
     int numberofplayers;
-    string tablename;
     player players[7];
+    player dealer;
     deck maindeck[4];
 
 public:
     table() {
         numberofplayers = 0;
+        dealer = *new player("dealer", 100000, 1, 1);
+        for (long unsigned int a = 0; a < sizeof(maindeck); a++){
+            maindeck[a] = *new deck();
+        }
     };
     table(string);
 

@@ -1,13 +1,12 @@
 #include "deck.h"
 
-deck::deck(int Seed) {
-    seed = Seed;
-}
+using namespace std;
 
-void deck::ShuffleDeck(){
+void deck::AsignCards(){
     for (int a = 0; a < 4; a++){
         for (int b = 0; b < 13; b++){
-
+            deckofcards[a][b].SetType(a + 1);
+            deckofcards[a][b].SetNumber(b + 1);
         }
     }
 }
@@ -28,9 +27,22 @@ card deck::GiveCard(){
             flag = false;
         }
     }
-
-    card *newcard = new card(number, type);
-
-    return *newcard;
+    cardcounter ++;
+    return deckofcards[type][number];
 }
 
+int deck::GetCardCount(){
+    return cardcounter;
+}
+
+void deck::SetCardCount(int num){
+    cardcounter = num;
+}
+
+void deck::ShowAllCard(){
+    for (int a = 0; a < 4; a++){
+        for (int b = 0; b < 13; b++){
+            cout << to_string(deckofcards[a][b].GetType()) + " " + to_string(deckofcards[a][b].GetNumber()) << endl;
+        }
+    }
+}

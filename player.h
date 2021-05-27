@@ -13,7 +13,8 @@ private:
     int roundsplayed;
     int roundswinned;
     card startingcards[2];
-    card extracard;
+    card extracard[5];
+    int extracardcounter;
     bool win;
 public:
     player(){};
@@ -26,13 +27,15 @@ public:
     void ChangeName(string);
     string ShowName();
 
-    void AddRound(bool);
+    void AddRound();
     int ShowRoundsPlayed();
     int ShowRoundsWinned();
 
     void GetHand(card, card);
     void AddCards(card);
     void RemoveHand();
+    
+    int CalculateHand();
 
     bool GetWin();
     void ChangeWin(bool);

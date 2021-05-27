@@ -6,6 +6,7 @@ player::player(string Username, int Money, int RoundsPlayed, int RoundsWinned){
     roundsplayed = RoundsPlayed;
     roundswinned = RoundsWinned;
     win = false;
+    extracardcounter = 0;
 }
 
 void player::AddMoney(int Money){
@@ -28,11 +29,12 @@ string player::ShowName(){
     return username;
 }
 
-void player::AddRound(bool check){
+void player::AddRound(){
     roundsplayed ++;
-    if (check){
+    if (win){
         roundswinned ++;
     }
+    win = false;
 }
 
 int player::ShowRoundsPlayed(){
@@ -48,13 +50,21 @@ void player::GetHand(card firstcard, card secondcard){
 }
 
 void player::AddCards(card newcard){
-    extracard = newcard;
+    extracard[extracardcounter] = newcard;
+    extracardcounter ++;
 }
 
 void player::RemoveHand(){
     startingcards[0].EraseCard();
     startingcards[1].EraseCard();
-    extracard.EraseCard();
+    for (int a = 0; a < extracardcounter; a++){
+        extracard[extracardcounter].EraseCard();
+    }
+    extracardcounter = 0;
+}
+
+int player::CalculateHand(){
+    return 0;
 }
 
 bool player::GetWin(){

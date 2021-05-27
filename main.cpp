@@ -11,7 +11,7 @@ ifstream inputfile;
 
 string writefile = "players.txt";
 
-table *maintable = new table();
+table maintable = *new table();
 
 typedef struct Players {
     string playername;
@@ -111,7 +111,7 @@ int WriteFile(Players players[], string file, int length){
     bool check = true;
 
     for (int a = 0; a < 7; a++){
-        aux = maintable->GetPlayers(a);
+        aux = maintable.GetPlayers(a);
         if (aux->ShowName() != ""){
             outputfile << aux->ShowName() + "," + \
                           to_string(aux->ShowMoney()) + "," + \
@@ -122,9 +122,8 @@ int WriteFile(Players players[], string file, int length){
 
     for (int a = 0; a < length; a++){
         for (int b = 0; b < 7; b++){
-            aux = maintable->GetPlayers(b);
+            aux = maintable.GetPlayers(b);
             if (aux->ShowName() == players[a].playername){
-                print(aux->ShowName() + " -> " + players[a].playername);
                 check = false;
             }
         }
@@ -139,6 +138,11 @@ int WriteFile(Players players[], string file, int length){
     
     outputfile.close();
     return 0;
+}
+
+void Game(table maintable){ //table *maintable, Players players[]
+    //bool flag = true;
+    maintable.ShuffleDecks();
 }
 
 int main() {
@@ -169,17 +173,17 @@ int main() {
                     if (CheckNumber(username)){
                         for (int a = 0; a < filelength; a++){
                             if (a+1 == stoi(username)){
-                                maintable->AddPlayers(players[a].playername, players[a].playermoney, players[a].numberofrounds, players[a].roundswin);
+                                maintable.AddPlayers(players[a].playername, players[a].playermoney, players[a].numberofrounds, players[a].roundswin);
                             }
                         }
                     }
                     break;
                 case 2:
-                    maintable->ShowPlayers();
+                    maintable.ShowPlayers();
                     print("Write the username you want to delete: ");
                     cin >> username;
                     if (CheckNumber(username)){
-                        if (maintable->RemovePlayers(stoi(username)) != 0){
+                        if (maintable.RemovePlayers(stoi(username)) != 0){
                             print("Error: Number out of range");
                         }
                     }
@@ -190,15 +194,17 @@ int main() {
                     print("Enter your money");
                     cin >> money;
                     if(CheckNumber(money)){
-                        maintable->AddPlayers(username, stoi(money), 1, 1);
+                        maintable.AddPlayers(username, stoi(money), 1, 1);
                     }
                     else{
                         print("Error: wrong money input");
                     }
                     break;
                 case 4:
-                    maintable->ShowPlayers();
+                    maintable.ShowPlayers();
+                    break;
                 case 5:
+                    Game(maintable); //maintable, players
                     break;
                 case 6:
                     WriteFile(players, writefile, filelength);
