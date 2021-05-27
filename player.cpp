@@ -32,12 +32,17 @@ string player::ShowName(){
 }
 
 void player::AddRound(){
+    int newmoney;
     roundsplayed ++;
     if (win){
         roundswinned ++;
+        newmoney = bet*multiplier;
+        AddMoney(newmoney);
     }
     win = false;
     stand = false;
+    multiplier = 0;
+    bet = 0;
 }
 
 int player::ShowRoundsPlayed(){

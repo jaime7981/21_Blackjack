@@ -146,40 +146,42 @@ bool PlayersBet(){
     player *roundplayer;
     for (int a = 0; a < 7; a++){
         roundplayer = maintable.GetPlayers(a);
-        cout << to_string(a + 1) + ") Name: " + roundplayer->ShowName() + \
-                                    " Money: " + to_string(roundplayer->ShowMoney()) << endl;
-        print("Options:\n 1) Bet\n 2) Out Of The Round\n 3) Exit Program");
-        cin >> userinput;
-        if (CheckNumber(userinput)){
-            switch (stoi(userinput)) {
-                case 1:
-                    cin >> bet;
-                    if (CheckNumber(bet)){
-                        if (roundplayer->ShowMoney() > stoi(bet)){
-                            roundplayer->SetBet(stoi(bet));
-                            roundplayer->RemoveMoney(stoi(bet));
+        if (roundplayer->ShowName() != ""){
+            cout << to_string(a + 1) + ") Name: " + roundplayer->ShowName() + \
+                                        " Money: " + to_string(roundplayer->ShowMoney()) << endl;
+            print("Options:\n 1) Bet\n 2) Out Of The Round\n 3) Exit Program");
+            cin >> userinput;
+            if (CheckNumber(userinput)){
+                switch (stoi(userinput)) {
+                    case 1:
+                        cin >> bet;
+                        if (CheckNumber(bet)){
+                            if (roundplayer->ShowMoney() > stoi(bet)){
+                                roundplayer->SetBet(stoi(bet));
+                                roundplayer->RemoveMoney(stoi(bet));
+                            }
+                            else {
+                                print("Error: Not enought money to bet: Out Of The Round");
+                                roundplayer->SetStand(true);
+                            }
                         }
                         else {
-                            print("Error: Not enought money to bet: Out Of The Round");
-                            roundplayer->SetStand(true);
+                            print("Error: Wrong input, not int");
                         }
-                    }
-                    else {
-                        print("Error: Wrong input, not int");
-                    }
-                    break;
-                case 2:
-                    roundplayer->SetStand(true);
-                    break;
-                case 3:
-                    return false;
-                    break;
-                default:
-                    break;
+                        break;
+                    case 2:
+                        roundplayer->SetStand(true);
+                        break;
+                    case 3:
+                        return false;
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
-        else {
-            print("Error: Wrong input, not int");
+            else {
+                print("Error: Wrong input, not int");
+            }
         }
     }
     return true;
@@ -198,35 +200,47 @@ void CardRounds(){
     for (int a = 0; a < 7; a++){
         roundplayer = maintable.GetPlayers(a);
 
-        cout << to_string(a + 1) + ") Name: " + roundplayer->ShowName() + " Bet: " + to_string(maintable.GetPlayers(a)->GetBet()) << endl;
-        cout << "   Card1: " + to_string(roundplayer->GetCards(0).GetType()) + " " + to_string(maintable.GetPlayers(a)->GetCards(0).GetNumber()) << endl;
-        cout << "   Card2: " + to_string(roundplayer->GetCards(1).GetType()) + " " + to_string(maintable.GetPlayers(a)->GetCards(1).GetNumber()) << endl;
-        cout << "Sum: " + to_string(roundplayer->CardSum()) << endl;
         if (roundplayer->ShowName() != ""){
+            cout << to_string(a + 1) + ") Name: " + roundplayer->ShowName() + " Bet: " + to_string(roundplayer->GetBet()) << endl;
+            cout << "   Card1: " + to_string(roundplayer->GetCards(0).GetType()) + " " + to_string(roundplayer->GetCards(0).GetNumber()) << endl;
+            cout << "   Card2: " + to_string(roundplayer->GetCards(1).GetType()) + " " + to_string(roundplayer->GetCards(1).GetNumber()) << endl;
+            cout << "Sum: " + to_string(roundplayer->CardSum()) << endl;
+
             while(round){
                 if (roundplayer->GetStand() != true){
                     print("Options:\n 1) Ask Card\n 2) Stand");
                     if (split){
-                        print("\n3) Split");
+                        print(" 3) Split");
                     }
                     cin >> userinput;
                     switch (stoi(userinput)) {
                         case 1:
                             roundplayer->AddCards(maintable.AskForCards());
-                            cout << "Sum: " + to_string(maintable.GetPlayers(a)->CardSum()) << endl;
+                            cout << "Sum: " + to_string(roundplayer->CardSum()) << endl;
+                            if (roundplayer->CardSum() > 21){
+                                print("You lose");
+                                roundplayer->SetStand(true);
+                            }
+                            else if (roundplayer->CardSum() == 21){
+                                roundplayer->SetStand(true);
+                                roundplayer->SetWin(true);
+                                roundplayer->SetMultiplier(1 + 3/2);
+                            }
                             break;
                         case 2:
                             roundplayer->SetStand(true);
                             round = false;
                             break;
                         case 3:
-                            round = false;
                             break;
                         default:
                             break;
                     }
                 }
+                split = false;
             }
+            round = true;
+            split = true;
         }
     }
 }
@@ -236,9 +250,13 @@ void Game(){
     maintable.EndRound();
 
     while (flag) {
+        print("New Game");
         maintable.StartRound();
 
-        flag = PlayersBet();
+        if (PlayersBet() == false){
+            flag = false;
+            break;
+        }
 
         CardRounds();
     }
