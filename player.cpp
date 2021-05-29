@@ -102,7 +102,7 @@ int player::CardSum(){
     for (int a = 0; a < 5; a++){
         if (extracard[a].GetNumber() != 0){
             num = extracard[a].GetNumber();
-            cout << to_string(num) << endl;
+            //cout << to_string(num) << endl;
             if (num == 1){
                 as ++;
             }
@@ -115,20 +115,14 @@ int player::CardSum(){
         }
     }
     for (int a = 0; a < as; a++){
-        sum += 1;
         aux = sum + 11;
-        if (aux <=21){
+        sum += 1;
+        if (aux <= 21){
             sum = aux;
         }
-        else if (sum <= 21) {
-            sum = sum;
+        else if (sum > 21) {
+            return sum; //pierde
         }
-        else{
-            return 1; //1 es que perdio
-        }
-    }
-    if (sum == 21){
-        return 0; //gano
     }
     return sum;
 }

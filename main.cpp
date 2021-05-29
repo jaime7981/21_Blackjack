@@ -187,6 +187,46 @@ bool PlayersBet(){
     return true;
 }
 
+void Cupier(){
+    player *cupier = maintable.GetPlayers(8);
+    cout << cupier->ShowName() << endl;
+    cout << "   Card1: " + to_string(cupier->GetCards(0).GetType()) + " " + to_string(cupier->GetCards(0).GetNumber()) << endl;
+    cout << "   Card2: " + to_string(cupier->GetCards(1).GetType()) + " " + to_string(cupier->GetCards(1).GetNumber()) << endl;
+    cout << "Sum: " + to_string(cupier->CardSum()) << endl;
+
+    while (cupier->GetStand() == false){
+        if (cupier->CardSum() < 17){
+            cupier->AddCards(maintable.AskForCards());
+            cout << "Sum: " + to_string(cupier->CardSum()) << endl;
+
+            if (cupier->CardSum() >= 17){
+                cupier->SetStand(true);
+                if (cupier->CardSum() > 21){
+                    cupier->SetWin(false);
+                    cout << "The dealer loose" << endl;
+                }
+                else {
+                    cupier->SetWin(true);
+                    cout << "The dealer stands at " + to_string(cupier->CardSum()) << endl;
+                }
+            }
+        }
+    }
+    if (cupier->GetWin()){
+        print("Calculating who wins\n");
+    }
+    else{
+        player *players;
+        for (int a = 0; a < 7; a++){
+            players = maintable.GetPlayers(a);
+            if (players->ShowName() != ""){
+                players->AddMoney(players->GetBet() * players->GetMultiplier());
+                print(players->ShowName() + " Wins " + to_string(players->GetBet()*players->GetMultiplier()));
+            }
+        }
+    }
+}
+
 void CardRounds(){
     string userinput;
     player *roundplayer;
@@ -220,6 +260,7 @@ void CardRounds(){
                             if (roundplayer->CardSum() > 21){
                                 print("You lose");
                                 roundplayer->SetStand(true);
+                                round = false;
                             }
                             else if (roundplayer->CardSum() == 21){
                                 roundplayer->SetStand(true);
@@ -243,6 +284,7 @@ void CardRounds(){
             split = true;
         }
     }
+    Cupier();
 }
 
 void Game(){
@@ -257,13 +299,13 @@ void Game(){
             flag = false;
             break;
         }
-
         CardRounds();
     }
 }
 
 int main() {
 
+    srand(time(0));
     int filelength = GetFileLength(writefile);
     Players players[filelength];
     ReadFile(players, writefile);
