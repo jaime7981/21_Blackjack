@@ -189,6 +189,7 @@ bool PlayersBet(){
 
 void Cupier(){
     player *cupier = maintable.GetPlayers(8);
+    cupier->SetStand(false);
     cout << cupier->ShowName() << endl;
     cout << "   Card1: " + to_string(cupier->GetCards(0).GetType()) + " " + to_string(cupier->GetCards(0).GetNumber()) << endl;
     cout << "   Card2: " + to_string(cupier->GetCards(1).GetType()) + " " + to_string(cupier->GetCards(1).GetNumber()) << endl;
@@ -211,16 +212,67 @@ void Cupier(){
                 }
             }
         }
+        else {
+            cupier->SetStand(true);
+            cupier->SetWin(true);
+            cout << "The dealer stands at " + to_string(cupier->CardSum()) << endl;
+        }
     }
+    player *players;
     if (cupier->GetWin()){
         print("Calculating who wins\n");
-    }
-    else{
-        player *players;
         for (int a = 0; a < 7; a++){
             players = maintable.GetPlayers(a);
             if (players->ShowName() != ""){
-                players->AddMoney(players->GetBet() * players->GetMultiplier());
+
+                if (players->CardSum() < 21){
+                    if (cupier->CardSum() < players->CardSum()){
+                        players->SetMultiplier(2);
+                        players->SetWin(true);
+                    }
+                    else if (cupier->CardSum() == players->CardSum()){
+                        players->SetMultiplier(1);
+                        players->SetWin(false);
+                    }
+                    else{
+                        players->SetMultiplier(0);
+                        players->SetWin(false);
+                    }
+                }
+                else if (players->CardSum() == 21){
+                    if (cupier->CardSum() < players->CardSum()){
+                        players->SetMultiplier(1 + 3/2);
+                        players->SetWin(true);
+                    }
+                    else if (cupier->CardSum() == players->CardSum()){
+                        players->SetMultiplier(1);
+                        players->SetWin(false);
+                    }
+                    else{
+                        players->SetMultiplier(0);
+                        players->SetWin(false);
+                    }
+                }
+                else{
+                    players->SetMultiplier(0);
+                    players->SetWin(false);
+                }
+                print(players->ShowName() + " Wins " + to_string(players->GetBet()*players->GetMultiplier()));
+            }
+        }
+    }
+    else{
+        for (int a = 0; a < 7; a++){
+            players = maintable.GetPlayers(a);
+            if (players->ShowName() != ""){
+                if (players->CardSum() <= 21){
+                    players->SetMultiplier(2);
+                    players->SetWin(true);
+                }
+                else{
+                    players->SetMultiplier(0);
+                    players->SetWin(false);
+                }
                 print(players->ShowName() + " Wins " + to_string(players->GetBet()*players->GetMultiplier()));
             }
         }
@@ -232,10 +284,8 @@ void CardRounds(){
     player *roundplayer;
     bool split = true;
     bool round = true;
-    cout << "Name: " + maintable.GetPlayers(8)->ShowName() + " Bet: " + to_string(maintable.GetPlayers(8)->GetBet()) << endl;
-    cout << " Card1: " + to_string(maintable.GetPlayers(8)->GetCards(0).GetType()) + " " + to_string(maintable.GetPlayers(8)->GetCards(0).GetNumber()) << endl;
-    cout << " Card2: " + to_string(maintable.GetPlayers(8)->GetCards(1).GetType()) + " " + to_string(maintable.GetPlayers(8)->GetCards(1).GetNumber()) << endl;
-    cout << "Sum: " + to_string(maintable.GetPlayers(8)->CardSum()) + "\n" << endl;
+    cout << "Name: " + maintable.GetPlayers(8)->ShowName() << endl;
+    cout << " Card 1: " + to_string(maintable.GetPlayers(8)->GetCards(0).GetType()) + " " + to_string(maintable.GetPlayers(8)->GetCards(0).GetNumber()) << endl;
 
     for (int a = 0; a < 7; a++){
         roundplayer = maintable.GetPlayers(a);
@@ -256,10 +306,13 @@ void CardRounds(){
                     switch (stoi(userinput)) {
                         case 1:
                             roundplayer->AddCards(maintable.AskForCards());
+                            
                             cout << "Sum: " + to_string(roundplayer->CardSum()) << endl;
                             if (roundplayer->CardSum() > 21){
                                 print("You lose");
                                 roundplayer->SetStand(true);
+                                roundplayer->SetMultiplier(0);
+                                roundplayer->SetWin(false);
                                 round = false;
                             }
                             else if (roundplayer->CardSum() == 21){
@@ -278,6 +331,9 @@ void CardRounds(){
                             break;
                     }
                 }
+                else{
+                    round = false;
+                }
                 split = false;
             }
             round = true;
@@ -292,14 +348,17 @@ void Game(){
     maintable.EndRound();
 
     while (flag) {
-        print("New Game");
+        print("\nNew Game");
         maintable.StartRound();
 
         if (PlayersBet() == false){
             flag = false;
             break;
         }
+        print("");
         CardRounds();
+        print("");
+        maintable.EndRound();
     }
 }
 
@@ -332,7 +391,17 @@ int main() {
                     if (CheckNumber(username)){
                         for (int a = 0; a < filelength; a++){
                             if (a+1 == stoi(username)){
-                                maintable.AddPlayers(players[a].playername, players[a].playermoney, players[a].numberofrounds, players[a].roundswin);
+                                if (players[a].numberofrounds > 10){
+                                    if ((100 * players[a].roundswin / players[a].numberofrounds) > 90){
+                                        cout << "Player Winrate is higher than 90%, he cant play anymore";
+                                    }
+                                    else{
+                                        maintable.AddPlayers(players[a].playername, players[a].playermoney, players[a].numberofrounds, players[a].roundswin);
+                                    }
+                                }
+                                else{
+                                    maintable.AddPlayers(players[a].playername, players[a].playermoney, players[a].numberofrounds, players[a].roundswin);
+                                }
                             }
                         }
                     }
@@ -353,7 +422,16 @@ int main() {
                     print("Enter your money");
                     cin >> money;
                     if(CheckNumber(money)){
-                        maintable.AddPlayers(username, stoi(money), 1, 1);
+                        bool create = true;
+                        for (int a = 0; a < filelength; a++){
+                            if (username == players[a].playername){
+                                create = false;
+                                print("Player already exist");
+                            }
+                        }
+                        if (create){
+                            maintable.AddPlayers(username, stoi(money), 1, 1);
+                        }
                     }
                     else{
                         print("Error: wrong money input");
@@ -364,6 +442,7 @@ int main() {
                     break;
                 case 5:
                     Game();
+                    WriteFile(players, writefile, filelength);
                     break;
                 case 6:
                     WriteFile(players, writefile, filelength);

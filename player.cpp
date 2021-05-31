@@ -1,5 +1,6 @@
 #include "player.h"
 #include "card.h"
+#include <string>
 
 player::player(string Username, int Money, int RoundsPlayed, int RoundsWinned){
     username = Username;
@@ -59,14 +60,15 @@ void player::GetHand(card firstcard, card secondcard){
 
 void player::AddCards(card newcard){
     extracard[extracardcounter] = newcard;
+    cout << " Card: " + to_string(newcard.GetType()) + " " + to_string(newcard.GetNumber()) << endl;
     extracardcounter ++;
 }
 
 void player::RemoveHand(){
     startingcards[0].EraseCard();
     startingcards[1].EraseCard();
-    for (int a = 0; a < extracardcounter; a++){
-        extracard[extracardcounter].EraseCard();
+    for (int a = 0; a < 5; a++){
+        extracard[a].EraseCard();
     }
     extracardcounter = 0;
 }

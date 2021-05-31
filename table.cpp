@@ -3,9 +3,23 @@
 #include <ctime>
 
 void table::AddPlayers(string username, int money, int roundsplayed, int roundswinned){
+    bool sit = true;
     if (numberofplayers < 8){
-        players[numberofplayers] = *new player(username, money, roundsplayed, roundswinned);
-        numberofplayers ++;
+        for (int a = 0; a < 7; a++){
+            if (players[a].ShowName() != ""){
+                if (players[a].ShowName() == username){
+                    sit = false;
+                    cout << "Player if already on the table" << endl;
+                }
+            }
+        }
+        if (sit){
+            players[numberofplayers] = *new player(username, money, roundsplayed, roundswinned);
+            numberofplayers ++;
+        }
+    }
+    else{
+        cout << "The table is full" << endl;
     }
 }
 
