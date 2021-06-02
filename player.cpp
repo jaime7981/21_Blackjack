@@ -60,7 +60,6 @@ void player::GetHand(card firstcard, card secondcard){
 
 void player::AddCards(card newcard){
     extracard[extracardcounter] = newcard;
-    cout << " Card: " + to_string(newcard.GetType()) + " " + to_string(newcard.GetNumber()) << endl;
     extracardcounter ++;
 }
 

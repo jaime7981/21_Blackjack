@@ -13,12 +13,41 @@ string writefile = "players.txt";
 
 table maintable = *new table();
 
+string CardSpecialNumber[4] = {"A", "J", "Q", "K"};
+
+string CardType[4] = {"\u2661", "\u2660", "\u25C7", "\u2663"};
+
+string Interfaz[36];
+string InterfazInfo[8][4]; //Nombre, plata, bet, cartas
+
 typedef struct Players {
     string playername;
     int playermoney;
     int numberofrounds;
     int roundswin;
 } Players;
+
+void PrintCard(int type, int number){
+    
+    switch (number) {
+        case 1:
+            cout <<  CardSpecialNumber[0] + " ";
+            break;
+        case 11:
+            cout <<  CardSpecialNumber[1] + " ";
+            break;
+        case 12:
+            cout <<  CardSpecialNumber[2] + " ";
+            break;
+        case 13:
+            cout <<  CardSpecialNumber[3] + " ";
+            break;
+        default:
+            cout <<  to_string(number) + " ";
+            break;
+    }
+    cout << CardType[type - 1] << endl;
+}
 
 void print(string writeline){
     cout << writeline << endl;
@@ -42,6 +71,17 @@ int GetFileLength(string file){
     }
     inputfile.close();
     return filelength;
+}
+
+void SaveInterface(){
+    inputfile.open("interfaz.txt");
+    string readline;
+    int counter = 0;
+    while(getline(inputfile, readline)){
+        Interfaz[counter] = readline;
+        counter ++;
+    }
+    inputfile.close();
 }
 
 int ReadFile(Players players[], string file){
@@ -147,6 +187,7 @@ bool PlayersBet(){
     for (int a = 0; a < 7; a++){
         roundplayer = maintable.GetPlayers(a);
         if (roundplayer->ShowName() != ""){
+            print("");
             cout << to_string(a + 1) + ") Name: " + roundplayer->ShowName() + \
                                         " Money: " + to_string(roundplayer->ShowMoney()) << endl;
             print("Options:\n 1) Bet\n 2) Out Of The Round\n 3) Exit Program");
@@ -156,7 +197,7 @@ bool PlayersBet(){
                     case 1:
                         cin >> bet;
                         if (CheckNumber(bet)){
-                            if (roundplayer->ShowMoney() > stoi(bet)){
+                            if (roundplayer->ShowMoney() >= stoi(bet)){
                                 roundplayer->SetBet(stoi(bet));
                                 roundplayer->RemoveMoney(stoi(bet));
                             }
@@ -176,6 +217,7 @@ bool PlayersBet(){
                         return false;
                         break;
                     default:
+                    print("Error: Wrong input, out of the round");
                         break;
                 }
             }
@@ -189,15 +231,18 @@ bool PlayersBet(){
 
 void Cupier(){
     player *cupier = maintable.GetPlayers(8);
+    card cardinlpay;
     cupier->SetStand(false);
     cout << cupier->ShowName() << endl;
-    cout << "   Card1: " + to_string(cupier->GetCards(0).GetType()) + " " + to_string(cupier->GetCards(0).GetNumber()) << endl;
-    cout << "   Card2: " + to_string(cupier->GetCards(1).GetType()) + " " + to_string(cupier->GetCards(1).GetNumber()) << endl;
+    PrintCard(cupier->GetCards(0).GetType(), cupier->GetCards(0).GetNumber());
+    PrintCard(cupier->GetCards(1).GetType(), cupier->GetCards(1).GetNumber());
     cout << "Sum: " + to_string(cupier->CardSum()) << endl;
 
     while (cupier->GetStand() == false){
         if (cupier->CardSum() < 17){
-            cupier->AddCards(maintable.AskForCards());
+            cardinlpay = maintable.AskForCards();
+            cupier->AddCards(cardinlpay);
+            PrintCard(cardinlpay.GetType(), cardinlpay.GetNumber());
             cout << "Sum: " + to_string(cupier->CardSum()) << endl;
 
             if (cupier->CardSum() >= 17){
@@ -284,16 +329,20 @@ void CardRounds(){
     player *roundplayer;
     bool split = true;
     bool round = true;
-    cout << "Name: " + maintable.GetPlayers(8)->ShowName() << endl;
-    cout << " Card 1: " + to_string(maintable.GetPlayers(8)->GetCards(0).GetType()) + " " + to_string(maintable.GetPlayers(8)->GetCards(0).GetNumber()) << endl;
+
+    player *cupier = maintable.GetPlayers(8);
+    card cardinlpay;
+    cout << "Name: " + cupier->ShowName() << endl;
+    PrintCard(cupier->GetCards(0).GetType(), cupier->GetCards(0).GetNumber());
 
     for (int a = 0; a < 7; a++){
         roundplayer = maintable.GetPlayers(a);
 
         if (roundplayer->ShowName() != ""){
+            print("");
             cout << to_string(a + 1) + ") Name: " + roundplayer->ShowName() + " Bet: " + to_string(roundplayer->GetBet()) << endl;
-            cout << "   Card1: " + to_string(roundplayer->GetCards(0).GetType()) + " " + to_string(roundplayer->GetCards(0).GetNumber()) << endl;
-            cout << "   Card2: " + to_string(roundplayer->GetCards(1).GetType()) + " " + to_string(roundplayer->GetCards(1).GetNumber()) << endl;
+            PrintCard(roundplayer->GetCards(0).GetType(), roundplayer->GetCards(0).GetNumber());
+            PrintCard(roundplayer->GetCards(1).GetType(), roundplayer->GetCards(1).GetNumber());
             cout << "Sum: " + to_string(roundplayer->CardSum()) << endl;
 
             while(round){
@@ -305,7 +354,9 @@ void CardRounds(){
                     cin >> userinput;
                     switch (stoi(userinput)) {
                         case 1:
-                            roundplayer->AddCards(maintable.AskForCards());
+                            cardinlpay = maintable.AskForCards();
+                            roundplayer->AddCards(cardinlpay);
+                            PrintCard(cardinlpay.GetType(), cardinlpay.GetNumber());
                             
                             cout << "Sum: " + to_string(roundplayer->CardSum()) << endl;
                             if (roundplayer->CardSum() > 21){
@@ -319,6 +370,7 @@ void CardRounds(){
                                 roundplayer->SetStand(true);
                                 roundplayer->SetWin(true);
                                 roundplayer->SetMultiplier(1 + 3/2);
+                                round = false;
                             }
                             break;
                         case 2:
@@ -368,6 +420,10 @@ int main() {
     int filelength = GetFileLength(writefile);
     Players players[filelength];
     ReadFile(players, writefile);
+    SaveInterface();
+    for (long unsigned int a = 0; a < 36; a++){
+        print(Interfaz[a]);
+    }
 
     bool flag = true;
     string userinput;
