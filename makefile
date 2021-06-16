@@ -25,4 +25,4 @@ run:
 	./$(exe)
 
 clear:
-	rm *.o $(exe) players.txt
+	rm *.o $(exe)

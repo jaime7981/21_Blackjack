@@ -1,25 +1,10 @@
 #include "table.h"
 #include <string>
-#include <ctime>
 
 void table::AddPlayers(string username, int money, int roundsplayed, int roundswinned){
-    bool sit = true;
     if (numberofplayers < 8){
-        for (int a = 0; a < 7; a++){
-            if (players[a].ShowName() != ""){
-                if (players[a].ShowName() == username){
-                    sit = false;
-                    cout << "Player if already on the table" << endl;
-                }
-            }
-        }
-        if (sit){
-            players[numberofplayers] = *new player(username, money, roundsplayed, roundswinned);
-            numberofplayers ++;
-        }
-    }
-    else{
-        cout << "The table is full" << endl;
+        players[numberofplayers] = *new player(username, money, roundsplayed, roundswinned);
+        numberofplayers ++;
     }
 }
 
@@ -45,16 +30,10 @@ void table::ShowPlayers(){
 }
 
 player* table::GetPlayers(int num){
-    if (num == 8){
-        return &dealer;
-    }
-    else if (num < 8 && num >= 0){
-        return &players[num];
-    }
-    return NULL;
+    return &players[num];
 }
 
-void table::ShowDeck(){
+void table::ShuffleDecks(){
     for (int a = 0; a < 4; a++){
         maindeck[a].ShowAllCard();
     }
@@ -67,30 +46,14 @@ void table::StartRound(){
 
     for (int a = 0; a < 7; a++){
         if (players[a].ShowName() != ""){
-            decknumber = rand() % 4;
+            decknumber = 0; //randomizar
             firstcard = maindeck[decknumber].GiveCard();
-            decknumber = rand() % 4;
+            decknumber = 0; //randomizar
             secondcard = maindeck[decknumber].GiveCard();
 
             players[a].GetHand(firstcard, secondcard);
-            for (int a = 0; a < 5; a++){
-                
-            }
         }
-        
-        players[a].EmptyExtraCards();
     }
-    decknumber = rand() % 4;
-    firstcard = maindeck[decknumber].GiveCard();
-    decknumber = rand() % 4;
-    secondcard = maindeck[decknumber].GiveCard();
-
-    dealer.GetHand(firstcard, secondcard);
-}
-
-card table::AskForCards(){
-    int decknumber = rand() % 4;
-    return maindeck[decknumber].GiveCard();
 }
 
 void table::EndRound(){
@@ -100,5 +63,4 @@ void table::EndRound(){
             players[a].AddRound();
         }
     }
-    dealer.RemoveHand();
 }

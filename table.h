@@ -27,9 +27,9 @@ public:
     void ShowPlayers();
     player* GetPlayers(int num);
 
-    card AskForCards();
+    void AskForCards();
 
-    void ShowDeck();
+    void ShuffleDecks();
 
     void StartRound();
     void EndRound();

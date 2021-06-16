@@ -18,8 +18,8 @@ card deck::GiveCard(){
     int number;
     int type;
     while (flag){
-        a = rand() % 4;
-        b = rand() % 13;
+        a = 0; //randomizar
+        b = 0; //randomizar
         if (cards[a][b] != 0){
             type = a;
             number = b;
